@@ -1,0 +1,310 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="dashboard-card mb-4">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-users me-2"></i>إدارة المستخدمين</h5>
+                <div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="fas fa-plus-circle me-1"></i>إضافة مستخدم جديد
+                    </button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary ms-2">العودة للوحة التحكم</a>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <!-- Users Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped" id="usersTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>اسم المستخدم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>الاسم الكامل</th>
+                                <th>الرقم الطلابي</th>
+                                <th>القسم</th>
+                                <th>الدور</th>
+                                <th>تاريخ الإنشاء</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.full_name() }}</td>
+                                <td>{{ user.student_id }}</td>
+                                <td>{{ user.department }}</td>
+                                <td>
+                                    {% if user.role == 'admin' %}
+                                    <span class="badge bg-danger">مشرف</span>
+                                    {% elif user.role == 'teacher' %}
+                                    <span class="badge bg-success">معلم</span>
+                                    {% else %}
+                                    <span class="badge bg-primary">طالب</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary edit-user-btn" 
+                                            data-user-id="{{ user.id }}"
+                                            data-username="{{ user.username }}"
+                                            data-email="{{ user.email }}"
+                                            data-first-name="{{ user.first_name or '' }}"
+                                            data-last-name="{{ user.last_name or '' }}"
+                                            data-student-id="{{ user.student_id or '' }}"
+                                            data-department="{{ user.department or '' }}"
+                                            data-role="{{ user.role }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-user-btn" 
+                                            data-user-id="{{ user.id }}"
+                                            data-username="{{ user.username }}"
+                                            {% if user.id == current_user.id %}disabled{% endif %}>
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">إضافة مستخدم جديد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('admin_add_user') }}" method="post" id="addUserForm">
+                    {{ add_user_form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">اسم المستخدم*</label>
+                            {{ add_user_form.username(class="form-control", id="username", placeholder="اسم المستخدم", required=true) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">البريد الإلكتروني*</label>
+                            {{ add_user_form.email(class="form-control", id="email", placeholder="البريد الإلكتروني", required=true) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">كلمة المرور*</label>
+                            {{ add_user_form.password(class="form-control", id="password", placeholder="كلمة المرور") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password" class="form-label">تأكيد كلمة المرور*</label>
+                            {{ add_user_form.confirm_password(class="form-control", id="confirm_password", placeholder="تأكيد كلمة المرور") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">الاسم الأول</label>
+                            {{ add_user_form.first_name(class="form-control", id="first_name", placeholder="الاسم الأول") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">الاسم الأخير</label>
+                            {{ add_user_form.last_name(class="form-control", id="last_name", placeholder="الاسم الأخير") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="student_id" class="form-label">الرقم الطلابي</label>
+                            {{ add_user_form.student_id(class="form-control", id="student_id", placeholder="الرقم الطلابي") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="department" class="form-label">القسم</label>
+                            {{ add_user_form.department(class="form-control", id="department", placeholder="القسم أو التخصص") }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">الدور*</label>
+                        {{ add_user_form.role(class="form-select", id="role") }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        {{ add_user_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">تعديل بيانات المستخدم</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('admin_edit_user') }}" method="post" id="editUserForm">
+                    {{ edit_user_form.hidden_tag() }}
+                    <input type="hidden" name="user_id" id="edit_user_id">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_username" class="form-label">اسم المستخدم*</label>
+                            {{ edit_user_form.username(class="form-control", id="edit_username", placeholder="اسم المستخدم", required=true) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_email" class="form-label">البريد الإلكتروني*</label>
+                            {{ edit_user_form.email(class="form-control", id="edit_email", placeholder="البريد الإلكتروني", required=true) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_first_name" class="form-label">الاسم الأول</label>
+                            {{ edit_user_form.first_name(class="form-control", id="edit_first_name", placeholder="الاسم الأول") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_last_name" class="form-label">الاسم الأخير</label>
+                            {{ edit_user_form.last_name(class="form-control", id="edit_last_name", placeholder="الاسم الأخير") }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_student_id" class="form-label">الرقم الطلابي</label>
+                            {{ edit_user_form.student_id(class="form-control", id="edit_student_id", placeholder="الرقم الطلابي") }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_department" class="form-label">القسم</label>
+                            {{ edit_user_form.department(class="form-control", id="edit_department", placeholder="القسم أو التخصص") }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_role" class="form-label">الدور*</label>
+                        {{ edit_user_form.role(class="form-select", id="edit_role") }}
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ edit_user_form.reset_password(class="form-check-input", id="edit_reset_password") }}
+                        <label class="form-check-label" for="edit_reset_password">إعادة تعيين كلمة المرور</label>
+                    </div>
+                    <div id="password_reset_fields" class="d-none">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_password" class="form-label">كلمة المرور الجديدة</label>
+                                {{ edit_user_form.password(class="form-control", id="edit_password", placeholder="كلمة المرور الجديدة") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_confirm_password" class="form-label">تأكيد كلمة المرور الجديدة</label>
+                                {{ edit_user_form.confirm_password(class="form-control", id="edit_confirm_password", placeholder="تأكيد كلمة المرور الجديدة") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        {{ edit_user_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">حذف مستخدم</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من رغبتك في حذف المستخدم <span id="delete_username" class="fw-bold"></span>؟</p>
+                <p class="text-danger">هذا الإجراء لا يمكن التراجع عنه.</p>
+                <form action="{{ url_for('admin_delete_user') }}" method="post" id="deleteUserForm">
+                    {{ delete_user_form.hidden_tag() }}
+                    {{ delete_user_form.user_id(id="delete_user_id") }}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="submit" form="deleteUserForm" class="btn btn-danger">حذف</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize datatable
+        new DataTable('#usersTable', {
+            responsive: true,
+            order: [[0, 'asc']],
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/ar.json'
+            }
+        });
+        
+        // Edit user functionality
+        const editUserBtns = document.querySelectorAll('.edit-user-btn');
+        editUserBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const username = this.getAttribute('data-username');
+                const email = this.getAttribute('data-email');
+                const firstName = this.getAttribute('data-first-name');
+                const lastName = this.getAttribute('data-last-name');
+                const studentId = this.getAttribute('data-student-id');
+                const department = this.getAttribute('data-department');
+                const role = this.getAttribute('data-role');
+                
+                document.getElementById('edit_user_id').value = userId;
+                document.getElementById('edit_username').value = username;
+                document.getElementById('edit_email').value = email;
+                document.getElementById('edit_first_name').value = firstName;
+                document.getElementById('edit_last_name').value = lastName;
+                document.getElementById('edit_student_id').value = studentId;
+                document.getElementById('edit_department').value = department;
+                document.getElementById('edit_role').value = role;
+                
+                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                modal.show();
+            });
+        });
+        
+        // Toggle password reset fields
+        const resetPasswordCheckbox = document.getElementById('edit_reset_password');
+        const passwordResetFields = document.getElementById('password_reset_fields');
+        
+        resetPasswordCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                passwordResetFields.classList.remove('d-none');
+            } else {
+                passwordResetFields.classList.add('d-none');
+            }
+        });
+        
+        // Delete user functionality
+        const deleteUserBtns = document.querySelectorAll('.delete-user-btn');
+        deleteUserBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                const username = this.getAttribute('data-username');
+                
+                document.getElementById('delete_user_id').value = userId;
+                document.getElementById('delete_username').textContent = username;
+                
+                const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+                modal.show();
+            });
+        });
+    });
+</script>
+{% endblock %}

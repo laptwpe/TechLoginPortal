@@ -1,0 +1,148 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="dashboard-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-check me-2"></i>تصحيح تسليم الواجب</h5>
+                <a href="{{ url_for('admin_view_submissions', assignment_id=submission.assignment_id) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-arrow-right me-1"></i> العودة للتسليمات
+                </a>
+            </div>
+            <div class="card-body-custom">
+                <!-- Submission Info Card -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">معلومات التسليم</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>الواجب:</strong> {{ submission.assignment.title }}</p>
+                                <p><strong>الطالب:</strong> {{ submission.student.full_name }} ({{ submission.student.username }})</p>
+                                <p><strong>تاريخ التسليم:</strong> {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p>
+                                    <strong>حالة التسليم:</strong> 
+                                    {% if submission.submitted_at > submission.assignment.due_date %}
+                                    <span class="badge bg-warning">متأخر</span>
+                                    {% else %}
+                                    <span class="badge bg-success">في الموعد</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>المادة:</strong> {{ submission.assignment.course.name }} ({{ submission.assignment.course.code }})</p>
+                                <p><strong>الدرجة الكلية:</strong> {{ submission.assignment.total_points }}</p>
+                                <p>
+                                    <strong>حالة التصحيح:</strong>
+                                    {% if submission.graded_at %}
+                                    <span class="badge bg-primary">تم التصحيح في {{ submission.graded_at.strftime('%Y-%m-%d') }}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">لم يتم التصحيح</span>
+                                    {% endif %}
+                                </p>
+                                {% if submission.file_path %}
+                                <p>
+                                    <strong>الملف المرفق:</strong>
+                                    <a href="{{ submission.file_path }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-download me-1"></i> تحميل الملف
+                                    </a>
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submission Content -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">محتوى التسليم</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if submission.submission_text %}
+                        <div class="submission-content">
+                            {{ submission.submission_text|safe }}
+                        </div>
+                        {% else %}
+                        <div class="text-center text-muted py-3">
+                            <p>لا يوجد محتوى نصي مع هذا التسليم.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Grading Form -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">تصحيح الواجب</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" novalidate>
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="score">{{ form.score.label }} <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            {{ form.score(class="form-control" + (" is-invalid" if form.score.errors else ""), id="score") }}
+                                            <span class="input-group-text">/ {{ submission.assignment.total_points }}</span>
+                                            {% if form.score.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.score.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="feedback">{{ form.feedback.label }}</label>
+                                        {{ form.feedback(class="form-control" + (" is-invalid" if form.feedback.errors else ""), id="feedback", rows=4) }}
+                                        {% if form.feedback.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.feedback.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-save me-1"></i> {{ form.submit.label }}
+                                        </button>
+                                        <a href="{{ url_for('admin_view_submissions', assignment_id=submission.assignment_id) }}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-times me-1"></i> إلغاء
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .submission-content {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="dashboard-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5>
+                    {% if event %}
+                    <i class="fas fa-edit me-2"></i>{{ title }}
+                    {% else %}
+                    <i class="fas fa-plus me-2"></i>{{ title }}
+                    {% endif %}
+                </h5>
+                <a href="{{ url_for('admin_events') }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-arrow-right me-1"></i> العودة للأنشطة
+                </a>
+            </div>
+            <div class="card-body-custom">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="title">{{ form.title.label }} <span class="text-danger">*</span></label>
+                                {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), id="title") }}
+                                {% if form.title.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="description">{{ form.description.label }} <span class="text-danger">*</span></label>
+                                {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), id="description", rows=4) }}
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="location">{{ form.location.label }}</label>
+                                {{ form.location(class="form-control" + (" is-invalid" if form.location.errors else ""), id="location") }}
+                                {% if form.location.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.location.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="start_time">{{ form.start_time.label }} <span class="text-danger">*</span></label>
+                                {{ form.start_time(class="form-control" + (" is-invalid" if form.start_time.errors else ""), id="start_time", type="datetime-local") }}
+                                {% if form.start_time.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.start_time.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="end_time">{{ form.end_time.label }} <span class="text-danger">*</span></label>
+                                {{ form.end_time(class="form-control" + (" is-invalid" if form.end_time.errors else ""), id="end_time", type="datetime-local") }}
+                                {% if form.end_time.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.end_time.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save me-1"></i> {{ form.submit.label }}
+                                </button>
+                                <a href="{{ url_for('admin_events') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> إلغاء
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Format datetime fields to be compatible with datetime-local input
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to format a date object to YYYY-MM-DDThh:mm format for datetime-local input
+        function formatDateForInput(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toISOString().slice(0, 16);
+        }
+        
+        // Initialize datetime pickers if necessary
+        {% if event %}
+        document.getElementById('start_time').value = formatDateForInput("{{ event.start_time }}");
+        document.getElementById('end_time').value = formatDateForInput("{{ event.end_time }}");
+        {% endif %}
+    });
+</script>
+{% endblock %}

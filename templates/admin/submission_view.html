@@ -1,0 +1,123 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="dashboard-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-file-alt me-2"></i>عرض تسليم الواجب</h5>
+                <div>
+                    <a href="{{ url_for('admin_view_submissions', assignment_id=submission.assignment_id) }}" class="btn btn-sm btn-outline-primary me-1">
+                        <i class="fas fa-arrow-right me-1"></i> العودة للتسليمات
+                    </a>
+                    <a href="{{ url_for('admin_grade_submission', submission_id=submission.id) }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-check me-1"></i> تصحيح الواجب
+                    </a>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <!-- Submission Info Card -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">معلومات التسليم</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>الواجب:</strong> {{ submission.assignment.title }}</p>
+                                <p><strong>الطالب:</strong> {{ submission.student.full_name }} ({{ submission.student.username }})</p>
+                                <p><strong>تاريخ التسليم:</strong> {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p>
+                                    <strong>حالة التسليم:</strong> 
+                                    {% if submission.submitted_at > submission.assignment.due_date %}
+                                    <span class="badge bg-warning">متأخر</span>
+                                    {% else %}
+                                    <span class="badge bg-success">في الموعد</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>المادة:</strong> {{ submission.assignment.course.name }} ({{ submission.assignment.course.code }})</p>
+                                <p><strong>تاريخ التسليم النهائي:</strong> {{ submission.assignment.due_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p>
+                                    <strong>الدرجة:</strong>
+                                    {% if submission.score is not none %}
+                                    <span class="badge bg-primary">{{ submission.score }} / {{ submission.assignment.total_points }}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">لم يتم التصحيح</span>
+                                    {% endif %}
+                                </p>
+                                {% if submission.file_path %}
+                                <p>
+                                    <strong>الملف المرفق:</strong>
+                                    <a href="{{ submission.file_path }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-download me-1"></i> تحميل الملف
+                                    </a>
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submission Content -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">محتوى التسليم</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if submission.submission_text %}
+                        <div class="submission-content">
+                            {{ submission.submission_text|safe }}
+                        </div>
+                        {% else %}
+                        <div class="text-center text-muted py-3">
+                            <p>لا يوجد محتوى نصي مع هذا التسليم.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Feedback -->
+                {% if submission.score is not none %}
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0">الدرجة والملاحظات</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h5>الدرجة: <span class="text-primary">{{ submission.score }} / {{ submission.assignment.total_points }}</span></h5>
+                                <p class="text-muted">تم التصحيح في: {{ submission.graded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if submission.feedback %}
+                        <div class="feedback-content">
+                            <h6>ملاحظات المصحح:</h6>
+                            <div class="p-3 bg-light border rounded">
+                                {{ submission.feedback|nl2br }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-muted">
+                            <p>لا توجد ملاحظات مع هذا التصحيح.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .submission-content {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+    }
+</style>
+{% endblock %}

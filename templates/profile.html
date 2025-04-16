@@ -1,0 +1,124 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="dashboard-card mb-4">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-user-circle me-2"></i>الحساب الشخصي</h5>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-primary">العودة للرئيسية</a>
+            </div>
+            <div class="card-body-custom">
+                <form method="POST" action="{{ url_for('profile') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="username">اسم المستخدم <span class="text-danger">*</span></label>
+                                {{ form.username(class="form-control", id="username") }}
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.username.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>البريد الإلكتروني</label>
+                                <input type="email" class="form-control" value="{{ current_user.email }}" disabled>
+                                <small class="text-muted">لا يمكن تعديل البريد الإلكتروني</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="first_name">الاسم الأول</label>
+                                {{ form.first_name(class="form-control", id="first_name") }}
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.first_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="last_name">الاسم الأخير</label>
+                                {{ form.last_name(class="form-control", id="last_name") }}
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.last_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="student_id">الرقم الطلابي</label>
+                                {{ form.student_id(class="form-control", id="student_id") }}
+                                {% if form.student_id.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.student_id.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="department">القسم أو التخصص</label>
+                                {{ form.department(class="form-control", id="department") }}
+                                {% if form.department.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.department.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>نوع الحساب</label>
+                                <input type="text" class="form-control" value="{% if current_user.is_admin %}مشرف النظام{% elif current_user.is_teacher %}مدرس{% else %}طالب{% endif %}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>تاريخ الإنضمام</label>
+                                <input type="text" class="form-control" value="{{ current_user.created_at.strftime('%Y-%m-%d') }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary px-4 me-2">
+                            <i class="fas fa-save me-2"></i>حفظ التغييرات
+                        </button>
+                        <a href="{{ url_for('change_password') }}" class="btn btn-outline-secondary px-4">
+                            <i class="fas fa-key me-2"></i>تغيير كلمة المرور
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="dashboard-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5>
+                    {% if assignment %}
+                    <i class="fas fa-edit me-2"></i>{{ title }}
+                    {% else %}
+                    <i class="fas fa-plus me-2"></i>{{ title }}
+                    {% endif %}
+                </h5>
+                <a href="{{ url_for('admin_course_assignments', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-arrow-right me-1"></i> العودة للواجبات
+                </a>
+            </div>
+            <div class="card-body-custom">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="title">{{ form.title.label }} <span class="text-danger">*</span></label>
+                                {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), id="title") }}
+                                {% if form.title.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="description">{{ form.description.label }} <span class="text-danger">*</span></label>
+                                {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), id="description", rows=5) }}
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="due_date">{{ form.due_date.label }} <span class="text-danger">*</span></label>
+                                {{ form.due_date(class="form-control" + (" is-invalid" if form.due_date.errors else ""), id="due_date", type="datetime-local") }}
+                                {% if form.due_date.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.due_date.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="total_points">{{ form.total_points.label }} <span class="text-danger">*</span></label>
+                                {{ form.total_points(class="form-control" + (" is-invalid" if form.total_points.errors else ""), id="total_points") }}
+                                {% if form.total_points.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.total_points.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save me-1"></i> {{ form.submit.label }}
+                                </button>
+                                <a href="{{ url_for('admin_course_assignments', course_id=course.id) }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> إلغاء
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Format datetime fields to be compatible with datetime-local input
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to format a date object to YYYY-MM-DDThh:mm format for datetime-local input
+        function formatDateForInput(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toISOString().slice(0, 16);
+        }
+        
+        // Initialize datetime picker if necessary
+        {% if assignment %}
+        document.getElementById('due_date').value = formatDateForInput("{{ assignment.due_date }}");
+        {% endif %}
+    });
+</script>
+{% endblock %}

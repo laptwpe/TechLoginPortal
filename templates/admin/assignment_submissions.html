@@ -1,0 +1,116 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="dashboard-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-clipboard-list me-2"></i>تسليمات الواجب - {{ assignment.title }}</h5>
+                <div>
+                    <a href="{{ url_for('admin_course_assignments', course_id=assignment.course_id) }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-arrow-right me-1"></i> العودة للواجبات
+                    </a>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <!-- Assignment details -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="card-title">{{ assignment.title }}</h5>
+                                <p class="card-text">{{ assignment.description }}</p>
+                                <div class="mt-2 text-muted">
+                                    <strong>المادة:</strong> {{ assignment.course.name }} ({{ assignment.course.code }})
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="assignment-meta">
+                                    <div class="assignment-meta-item">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <strong>تاريخ التسليم:</strong> {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}
+                                    </div>
+                                    <div class="assignment-meta-item">
+                                        <i class="fas fa-star me-2"></i>
+                                        <strong>الدرجة الكلية:</strong> {{ assignment.total_points }}
+                                    </div>
+                                    <div class="assignment-meta-item">
+                                        <i class="fas fa-users me-2"></i>
+                                        <strong>عدد التسليمات:</strong> {{ submissions|length }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submissions list -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>اسم الطالب</th>
+                                <th>تاريخ التسليم</th>
+                                <th>الدرجة</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for submission in submissions %}
+                            <tr>
+                                <td>{{ submission.id }}</td>
+                                <td>{{ submission.student.full_name }} ({{ submission.student.username }})</td>
+                                <td>{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if submission.score is not none %}
+                                    <span class="badge bg-primary">{{ submission.score }} / {{ assignment.total_points }}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">لم يتم التصحيح</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if submission.submitted_at > assignment.due_date %}
+                                    <span class="badge bg-warning">متأخر</span>
+                                    {% else %}
+                                    <span class="badge bg-success">في الموعد</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('admin_view_submission', submission_id=submission.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('admin_grade_submission', submission_id=submission.id) }}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if not submissions %}
+                <div class="text-center py-4">
+                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                    <p class="lead">لا توجد تسليمات لهذا الواجب حتى الآن</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .assignment-meta {
+        border-left: 1px solid #e0e0e0;
+        padding-left: 20px;
+    }
+    .assignment-meta-item {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}

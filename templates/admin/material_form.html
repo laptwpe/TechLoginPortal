@@ -1,0 +1,162 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="dashboard-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5>
+                    {% if material %}
+                    <i class="fas fa-edit me-2"></i>{{ title }}
+                    {% else %}
+                    <i class="fas fa-plus me-2"></i>{{ title }}
+                    {% endif %}
+                </h5>
+                <a href="{{ url_for('admin_course_materials', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-arrow-right me-1"></i> العودة للمواد التعليمية
+                </a>
+            </div>
+            <div class="card-body-custom">
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="title">{{ form.title.label }} <span class="text-danger">*</span></label>
+                                {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), id="title") }}
+                                {% if form.title.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="material_type">{{ form.material_type.label }} <span class="text-danger">*</span></label>
+                                {{ form.material_type(class="form-control" + (" is-invalid" if form.material_type.errors else ""), id="material_type") }}
+                                {% if form.material_type.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.material_type.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="description">{{ form.description.label }}</label>
+                                {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), id="description", rows=3) }}
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 file-input-section">
+                            <div class="form-group">
+                                <label for="file">{{ form.file.label }}</label>
+                                <div class="custom-file">
+                                    {{ form.file(class="form-control" + (" is-invalid" if form.file.errors else ""), id="file") }}
+                                    {% if form.file.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.file.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <small class="form-text text-muted">
+                                    ملاحظة: يمكنك رفع ملفات PDF أو مستندات أو عروض تقديمية.
+                                </small>
+                                {% if material and material.file_path %}
+                                <div class="mt-2 alert alert-info">
+                                    <i class="fas fa-file me-2"></i>
+                                    <a href="{{ material.file_path }}" target="_blank">عرض الملف الحالي</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6 link-input-section">
+                            <div class="form-group">
+                                <label for="external_link">{{ form.external_link.label }}</label>
+                                {{ form.external_link(class="form-control" + (" is-invalid" if form.external_link.errors else ""), id="external_link") }}
+                                {% if form.external_link.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.external_link.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <small class="form-text text-muted">
+                                    مثال: رابط لفيديو تعليمي، موقع مفيد، مصدر خارجي، إلخ.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-1"></i> {{ form.submit.label }}
+                                </button>
+                                <a href="{{ url_for('admin_course_materials', course_id=course.id) }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> إلغاء
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const materialTypeSelect = document.getElementById('material_type');
+        const fileInputSection = document.querySelector('.file-input-section');
+        const linkInputSection = document.querySelector('.link-input-section');
+        
+        function updateInputVisibility() {
+            const selectedType = materialTypeSelect.value;
+            
+            if (selectedType === 'pdf' || selectedType === 'other') {
+                fileInputSection.style.display = 'block';
+                document.getElementById('file').setAttribute('required', 'required');
+            } else {
+                fileInputSection.style.display = 'none';
+                document.getElementById('file').removeAttribute('required');
+            }
+            
+            if (selectedType === 'video' || selectedType === 'link') {
+                linkInputSection.style.display = 'block';
+                document.getElementById('external_link').setAttribute('required', 'required');
+            } else {
+                linkInputSection.style.display = 'none';
+                document.getElementById('external_link').removeAttribute('required');
+            }
+        }
+        
+        // Run once on page load
+        updateInputVisibility();
+        
+        // Add event listener for changes
+        materialTypeSelect.addEventListener('change', updateInputVisibility);
+    });
+</script>
+{% endblock %}

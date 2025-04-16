@@ -1,0 +1,230 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="dashboard-card mb-4">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-calendar-alt me-2"></i>الأنشطة والفعاليات</h5>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-primary">العودة للرئيسية</a>
+            </div>
+            <div class="card-body-custom">
+                <div class="row">
+                    <!-- Upcoming Events -->
+                    <div class="col-lg-9">
+                        <h6 class="section-title mb-3">الأنشطة القادمة</h6>
+                        {% if upcoming_events %}
+                            {% for event in upcoming_events %}
+                            <div class="event-card mb-4">
+                                <div class="event-date text-center px-3 py-2 bg-primary text-white rounded">
+                                    <div class="date-day">{{ event.start_time.strftime('%d') }}</div>
+                                    <div class="date-month">{{ event.start_time.strftime('%b') }}</div>
+                                </div>
+                                <div class="event-details px-3 py-2">
+                                    <h5 class="event-title mb-1">{{ event.title }}</h5>
+                                    <div class="event-meta mb-2">
+                                        <span><i class="far fa-clock me-1"></i>{{ event.start_time.strftime('%H:%M') }} - {{ event.end_time.strftime('%H:%M') }}</span>
+                                        <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ event.location }}</span>
+                                    </div>
+                                    <div class="event-description mb-2">
+                                        <p>{{ event.description }}</p>
+                                    </div>
+                                    <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-sm btn-outline-primary">التفاصيل والتسجيل</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                <p>لا توجد أنشطة قادمة حالياً</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Calendar View -->
+                    <div class="col-lg-3 d-none d-lg-block">
+                        <h6 class="section-title mb-3">التقويم</h6>
+                        <div class="calendar-widget p-3 border rounded bg-light">
+                            <div class="calendar-header d-flex justify-content-between mb-2">
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <h6 class="calendar-month mb-0">{{ now.strftime('%B %Y') }}</h6>
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                            </div>
+                            <table class="table table-sm table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th>أحد</th>
+                                        <th>إثن</th>
+                                        <th>ثلا</th>
+                                        <th>أرب</th>
+                                        <th>خمي</th>
+                                        <th>جمع</th>
+                                        <th>سبت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Calendar days would be dynamically generated -->
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>3</td>
+                                        <td>4</td>
+                                        <td>5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>7</td>
+                                        <td>8</td>
+                                        <td class="bg-primary text-white">9</td>
+                                        <td>10</td>
+                                        <td>11</td>
+                                        <td>12</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13</td>
+                                        <td>14</td>
+                                        <td>15</td>
+                                        <td>16</td>
+                                        <td class="bg-primary text-white">17</td>
+                                        <td>18</td>
+                                        <td>19</td>
+                                    </tr>
+                                    <tr>
+                                        <td>20</td>
+                                        <td>21</td>
+                                        <td>22</td>
+                                        <td>23</td>
+                                        <td>24</td>
+                                        <td class="bg-primary text-white">25</td>
+                                        <td>26</td>
+                                    </tr>
+                                    <tr>
+                                        <td>27</td>
+                                        <td>28</td>
+                                        <td>29</td>
+                                        <td>30</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="calendar-legend mt-2">
+                                <small>
+                                    <span class="badge bg-primary">&nbsp;</span> فعاليات
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Past Events -->
+                <div class="mt-4">
+                    <h6 class="section-title mb-3">أنشطة سابقة</h6>
+                    {% if past_events %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>العنوان</th>
+                                        <th>التاريخ</th>
+                                        <th>الوقت</th>
+                                        <th>المكان</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for event in past_events %}
+                                    <tr>
+                                        <td>{{ event.title }}</td>
+                                        <td>{{ event.start_time.strftime('%Y-%m-%d') }}</td>
+                                        <td>{{ event.start_time.strftime('%H:%M') }} - {{ event.end_time.strftime('%H:%M') }}</td>
+                                        <td>{{ event.location }}</td>
+                                        <td>
+                                            <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p>لا توجد أنشطة سابقة</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Event Detail Modal -->
+<div class="modal fade" id="eventDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title event-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="event-details">
+                    <!-- Event details will be dynamically injected here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <button type="button" class="btn btn-primary register-btn">التسجيل</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Event detail modal handler
+        const eventDetailBtns = document.querySelectorAll('[data-event-id]');
+        eventDetailBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                const eventTitle = this.getAttribute('data-event-title');
+                const eventDesc = this.getAttribute('data-event-desc');
+                const eventDate = this.getAttribute('data-event-date');
+                const eventTime = this.getAttribute('data-event-time');
+                const eventLocation = this.getAttribute('data-event-location');
+                
+                const modal = document.getElementById('eventDetailModal');
+                modal.querySelector('.event-title').textContent = eventTitle;
+                
+                // Build event details HTML
+                let detailsHTML = `
+                    <div class="event-meta mb-3">
+                        <p><i class="far fa-calendar-alt me-2"></i>${eventDate}</p>
+                        <p><i class="far fa-clock me-2"></i>${eventTime}</p>
+                        <p><i class="fas fa-map-marker-alt me-2"></i>${eventLocation}</p>
+                    </div>
+                    <div class="event-description">
+                        <h6>التفاصيل:</h6>
+                        <p>${eventDesc}</p>
+                    </div>
+                `;
+                
+                modal.querySelector('.event-details').innerHTML = detailsHTML;
+                
+                const modalInstance = new bootstrap.Modal(modal);
+                modalInstance.show();
+            });
+        });
+    });
+</script>
+{% endblock %}

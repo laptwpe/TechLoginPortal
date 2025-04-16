@@ -1,0 +1,99 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-bullhorn me-2"></i>الإعلانات</h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+                </div>
+                <div class="card-body-custom">
+                    <div class="announcement-item">
+                        <h6 class="fw-bold">تسجيل المواد للفصل الدراسي القادم</h6>
+                        <p class="announcement-date mb-2"><i class="far fa-calendar-alt me-1"></i>15 أبريل 2025</p>
+                        <p class="mb-0">يبدأ تسجيل المواد للفصل الدراسي القادم يوم 20 أبريل. يرجى مراجعة المرشد الأكاديمي قبل التسجيل.</p>
+                    </div>
+                    <div class="announcement-item">
+                        <h6 class="fw-bold">ورشة عمل البرمجة المتقدمة</h6>
+                        <p class="announcement-date mb-2"><i class="far fa-calendar-alt me-1"></i>12 أبريل 2025</p>
+                        <p class="mb-0">تدعوكم كلية الحاسبات والمعلومات لحضور ورشة عمل البرمجة المتقدمة الأسبوع القادم.</p>
+                    </div>
+                    <div class="announcement-item">
+                        <h6 class="fw-bold">تغيير مواعيد الاختبارات النهائية</h6>
+                        <p class="announcement-date mb-2"><i class="far fa-calendar-alt me-1"></i>10 أبريل 2025</p>
+                        <p class="mb-0">تم تحديث جدول الاختبارات النهائية، يرجى مراجعة الجدول الجديد على موقع الكلية.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card h-100">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-calendar-alt me-2"></i>الأنشطة القادمة</h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+                </div>
+                <div class="card-body-custom">
+                    <div class="event-item">
+                        <h6 class="fw-bold">ملتقى الخريجين السنوي</h6>
+                        <p class="event-date mb-2"><i class="far fa-clock me-1"></i>25 أبريل 2025، 16:00 - 20:00</p>
+                        <p class="mb-2">قاعة المؤتمرات الكبرى بالجامعة</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">معرفة المزيد</a>
+                    </div>
+                    <div class="event-item">
+                        <h6 class="fw-bold">مسابقة البرمجة</h6>
+                        <p class="event-date mb-2"><i class="far fa-clock me-1"></i>30 أبريل 2025، 10:00 - 14:00</p>
+                        <p class="mb-2">معمل الحاسوب - الطابق الثالث</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">معرفة المزيد</a>
+                    </div>
+                    <div class="event-item">
+                        <h6 class="fw-bold">ندوة التطور التكنولوجي</h6>
+                        <p class="event-date mb-2"><i class="far fa-clock me-1"></i>5 مايو 2025، 13:00 - 15:00</p>
+                        <p class="mb-2">قاعة المحاضرات - مبنى كلية الهندسة</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">معرفة المزيد</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="dashboard-card h-100">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-book me-2"></i>المواد الدراسية</h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">عرض الكل</a>
+                </div>
+                <div class="card-body-custom">
+                    <div class="course-item">
+                        <h6 class="fw-bold">البرمجة بلغة Python</h6>
+                        <p class="mb-2"><i class="fas fa-user me-1"></i>د. أحمد محمد</p>
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-book-open me-1"></i>المحاضرات</a>
+                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-tasks me-1"></i>الواجبات</a>
+                        </div>
+                    </div>
+                    <div class="course-item">
+                        <h6 class="fw-bold">قواعد البيانات</h6>
+                        <p class="mb-2"><i class="fas fa-user me-1"></i>د. منى إبراهيم</p>
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-book-open me-1"></i>المحاضرات</a>
+                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-tasks me-1"></i>الواجبات</a>
+                        </div>
+                    </div>
+                    <div class="course-item">
+                        <h6 class="fw-bold">أمن المعلومات</h6>
+                        <p class="mb-2"><i class="fas fa-user me-1"></i>د. حسام علي</p>
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-book-open me-1"></i>المحاضرات</a>
+                            <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-tasks me-1"></i>الواجبات</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

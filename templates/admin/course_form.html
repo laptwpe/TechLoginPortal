@@ -1,0 +1,130 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="dashboard-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5>
+                    {% if course %}
+                    <i class="fas fa-edit me-2"></i>{{ title }}
+                    {% else %}
+                    <i class="fas fa-plus me-2"></i>{{ title }}
+                    {% endif %}
+                </h5>
+                <a href="{{ url_for('admin_courses') }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-arrow-right me-1"></i> العودة للمواد
+                </a>
+            </div>
+            <div class="card-body-custom">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="code">{{ form.code.label }} <span class="text-danger">*</span></label>
+                                {{ form.code(class="form-control" + (" is-invalid" if form.code.errors else ""), id="code") }}
+                                {% if form.code.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.code.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">{{ form.name.label }} <span class="text-danger">*</span></label>
+                                {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), id="name") }}
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.name.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="description">{{ form.description.label }}</label>
+                                {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), id="description", rows=4) }}
+                                {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="department">{{ form.department.label }}</label>
+                                {{ form.department(class="form-control" + (" is-invalid" if form.department.errors else ""), id="department") }}
+                                {% if form.department.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.department.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="semester">{{ form.semester.label }}</label>
+                                {{ form.semester(class="form-control" + (" is-invalid" if form.semester.errors else ""), id="semester") }}
+                                {% if form.semester.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.semester.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="instructor_id">{{ form.instructor_id.label }} <span class="text-danger">*</span></label>
+                                {{ form.instructor_id(class="form-control" + (" is-invalid" if form.instructor_id.errors else ""), id="instructor_id") }}
+                                {% if form.instructor_id.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.instructor_id.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fas fa-save me-1"></i> {{ form.submit.label }}
+                                </button>
+                                <a href="{{ url_for('admin_courses') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> إلغاء
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

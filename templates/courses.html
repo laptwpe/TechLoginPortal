@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="dashboard-card mb-4">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-book me-2"></i>المواد الدراسية</h5>
+                <div>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-primary">العودة للرئيسية</a>
+                </div>
+            </div>
+            <div class="card-body-custom">
+                <div class="row">
+                    <!-- Department Filter -->
+                    <div class="col-lg-3 mb-4">
+                        <div class="dept-filter p-3 border rounded bg-light">
+                            <h6 class="fw-bold mb-3">الأقسام</h6>
+                            <div class="list-group">
+                                <a href="{{ url_for('courses') }}" class="list-group-item list-group-item-action {% if not selected_dept %}active{% endif %}">
+                                    كل الأقسام
+                                </a>
+                                {% for dept in departments %}
+                                <a href="{{ url_for('courses', dept=dept.id) }}" class="list-group-item list-group-item-action {% if selected_dept == dept.id %}active{% endif %}">
+                                    {{ dept.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="semester-filter mt-3 p-3 border rounded bg-light">
+                            <h6 class="fw-bold mb-3">الفصل الدراسي</h6>
+                            <div class="list-group">
+                                <a href="{{ url_for('courses', dept=selected_dept) }}" class="list-group-item list-group-item-action {% if not selected_semester %}active{% endif %}">
+                                    جميع الفصول
+                                </a>
+                                {% for semester in semesters %}
+                                <a href="{{ url_for('courses', dept=selected_dept, semester=semester) }}" class="list-group-item list-group-item-action {% if selected_semester == semester %}active{% endif %}">
+                                    {{ semester }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Course List -->
+                    <div class="col-lg-9">
+                        <div class="row">
+                            {% if courses %}
+                                {% for course in courses %}
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card h-100 course-card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6 class="mb-0">{{ course.code }}</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ course.name }}</h5>
+                                            <p class="card-text">{{ course.description|truncate(100) }}</p>
+                                            <div class="course-meta">
+                                                <p class="mb-1"><i class="fas fa-user me-2"></i>{{ course.instructor.full_name() }}</p>
+                                                {% if course.department %}
+                                                <p class="mb-1"><i class="fas fa-building me-2"></i>{{ course.department }}</p>
+                                                {% endif %}
+                                                {% if course.semester %}
+                                                <p class="mb-1"><i class="fas fa-calendar-alt me-2"></i>{{ course.semester }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-outline-primary w-100">عرض المادة</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-12">
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                                        <p class="lead">لا توجد مواد دراسية متاحة حالياً</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
